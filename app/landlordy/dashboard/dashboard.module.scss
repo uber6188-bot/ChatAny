@@ -122,15 +122,34 @@
   font-size: 11px;
   color: #6b7280;
 }
+.muted {
+  opacity: 0.5;
+  background: #f9fafb;
+}
+.today {
+  outline: 2px solid #2e6ff2;
+  outline-offset: -2px;
+}
 .amount {
   margin-top: auto;
   font-size: 12px;
 }
-.dot {
+.dot,
+.dotOverdue,
+.dotDue,
+.dotToday {
   width: 6px;
   height: 6px;
   border-radius: 6px;
+}
+.dotOverdue {
   background: #ef4444;
+}
+.dotToday {
+  background: #2e6ff2;
+}
+.dotDue {
+  background: #9ca3af;
 }
 
 .timeline {

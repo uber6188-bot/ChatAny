@@ -64,29 +64,109 @@ function ChartCard({ title }: { title: string }) {
   );
 }
 
+type DueEvent = { date: string; amount: number };
+
+function buildMonthMatrix(year: number, monthIndex0: number) {
+  // monthIndex0: 0-11
+  const first = new Date(year, monthIndex0, 1);
+  const startWeekday = (first.getDay() + 6) % 7; // make Monday=0
+  const startDate = new Date(first);
+  startDate.setDate(first.getDate() - startWeekday);
+  const days: Date[] = [];
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(startDate);
+    d.setDate(startDate.getDate() + i);
+    days.push(d);
+  }
+  return days;
+}
+
+function isSameDate(a: Date, b: Date) {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
 function Calendar() {
-  const days = Array.from({ length: 35 }, (_, i) => i + 1);
+  const [cursor, setCursor] = React.useState(() => new Date());
+  const [events] = React.useState<DueEvent[]>([
+    { date: "2025-10-05", amount: 8000 },
+    { date: "2025-10-10", amount: 16000 },
+    { date: "2025-10-15", amount: 8000 },
+    { date: "2025-10-20", amount: 24000 },
+  ]);
+
+  const year = cursor.getFullYear();
+  const month = cursor.getMonth();
+  const matrix = buildMonthMatrix(year, month);
+  const today = new Date();
+
+  const formatMonthLabel = (d: Date) =>
+    d.toLocaleDateString("zh-HK", { year: "numeric", month: "short" });
+
+  const totalByDate = new Map<string, number>();
+  for (const e of events) {
+    totalByDate.set(e.date, (totalByDate.get(e.date) ?? 0) + e.amount);
+  }
+
+  const toKey = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate(),
+    ).padStart(2, "0")}`;
+
+  const isCurrentMonth = (d: Date) => d.getMonth() === month;
+
+  const isOverdue = (d: Date) => {
+    const key = toKey(d);
+    return totalByDate.has(key) && d < today && !isSameDate(d, today);
+  };
+  const isDueToday = (d: Date) =>
+    totalByDate.has(toKey(d)) && isSameDate(d, today);
+
+  const prevMonth = () =>
+    setCursor((c) => new Date(c.getFullYear(), c.getMonth() - 1, 1));
+  const nextMonth = () =>
+    setCursor((c) => new Date(c.getFullYear(), c.getMonth() + 1, 1));
+
   return (
     <div className={styles.calendar}>
       <div className={styles.calendarHeader}>
-        <div>Oct 2025</div>
+        <div>{formatMonthLabel(cursor)}</div>
         <div style={{ display: "flex", gap: 6 }}>
-          <IconButton text="◀" />
-          <IconButton text="▶" />
+          <IconButton text="◀" onClick={prevMonth} />
+          <IconButton text="▶" onClick={nextMonth} />
         </div>
       </div>
       <div className={styles.calendarGrid}>
-        {days.map((d) => (
-          <div className={styles.dayCell} key={d}>
-            <div className={styles.dayHeader}>
-              <span>{d}</span>
-              {d % 6 === 0 && <span className={styles.dot} />}
+        {matrix.map((d) => {
+          const key = toKey(d);
+          const amount = totalByDate.get(key);
+          const muted = !isCurrentMonth(d);
+          const todayFlag = isSameDate(d, today);
+          return (
+            <div
+              key={key}
+              className={`${styles.dayCell} ${muted ? styles.muted : ""} ${
+                todayFlag ? styles.today : ""
+              }`}
+              title={amount ? `${key} ${formatCurrencyHKD(amount)}` : key}
+            >
+              <div className={styles.dayHeader}>
+                <span>{d.getDate()}</span>
+                {isOverdue(d) && <span className={styles.dotOverdue} />}
+                {isDueToday(d) && <span className={styles.dotToday} />}
+                {!isOverdue(d) && !isDueToday(d) && amount && (
+                  <span className={styles.dotDue} />
+                )}
+              </div>
+              {amount && (
+                <div className={styles.amount}>{formatCurrencyHKD(amount)}</div>
+              )}
             </div>
-            {d % 5 === 0 && (
-              <div className={styles.amount}>{formatCurrencyHKD(8000)}</div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
