@@ -8,6 +8,7 @@ import { SideBar, SideBarBody } from "@/app/components/sidebar";
 import homeStyles from "@/app/components/home.module.scss";
 import { WindowContent } from "@/app/components/home";
 import { CashflowChart, CollectionRateChart } from "./Charts";
+import { getReceivablesByDateRange } from "./mock";
 
 function formatCurrencyHKD(amount: number) {
   return new Intl.NumberFormat("zh-HK", {
@@ -91,12 +92,7 @@ function isSameDate(a: Date, b: Date) {
 
 function Calendar() {
   const [cursor, setCursor] = React.useState(() => new Date());
-  const [events] = React.useState<DueEvent[]>([
-    { date: "2025-10-05", amount: 8000 },
-    { date: "2025-10-10", amount: 16000 },
-    { date: "2025-10-15", amount: 8000 },
-    { date: "2025-10-20", amount: 24000 },
-  ]);
+  const [map, setMap] = React.useState<Record<string, number>>({});
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -106,10 +102,7 @@ function Calendar() {
   const formatMonthLabel = (d: Date) =>
     d.toLocaleDateString("zh-HK", { year: "numeric", month: "short" });
 
-  const totalByDate = new Map<string, number>();
-  for (const e of events) {
-    totalByDate.set(e.date, (totalByDate.get(e.date) ?? 0) + e.amount);
-  }
+  const totalByDate = new Map<string, number>(Object.entries(map));
 
   const toKey = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
@@ -129,6 +122,18 @@ function Calendar() {
     setCursor((c) => new Date(c.getFullYear(), c.getMonth() - 1, 1));
   const nextMonth = () =>
     setCursor((c) => new Date(c.getFullYear(), c.getMonth() + 1, 1));
+
+  React.useEffect(() => {
+    const rangeStart = new Date(year, month, 1);
+    const rangeEnd = new Date(year, month + 1, 0);
+    const s = `${rangeStart.getFullYear()}-${String(
+      rangeStart.getMonth() + 1,
+    ).padStart(2, "0")}-${String(rangeStart.getDate()).padStart(2, "0")}`;
+    const e = `${rangeEnd.getFullYear()}-${String(
+      rangeEnd.getMonth() + 1,
+    ).padStart(2, "0")}-${String(rangeEnd.getDate()).padStart(2, "0")}`;
+    setMap(getReceivablesByDateRange(s, e));
+  }, [year, month]);
 
   return (
     <div className={styles.calendar}>
