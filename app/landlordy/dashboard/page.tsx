@@ -4,6 +4,10 @@ import React from "react";
 import styles from "./dashboard.module.scss";
 import { IconButton } from "@/app/components/button";
 import { Select } from "@/app/components/ui-lib";
+import { SideBar, SideBarBody } from "@/app/components/sidebar";
+import homeStyles from "@/app/components/home.module.scss";
+import { WindowContent } from "@/app/components/home";
+import { CashflowChart, CollectionRateChart } from "./Charts";
 
 function formatCurrencyHKD(amount: number) {
   return new Intl.NumberFormat("zh-HK", {
@@ -110,20 +114,31 @@ function Timeline() {
 
 export default function DashboardPage() {
   return (
-    <div className={styles.window}>
-      <Topbar />
-      <div className={styles.content}>
-        <KpiRow />
-        <div className={styles.gridTwo}>
-          <ChartCard title="現金流（過去12月）" />
-          <Timeline />
+    <div className={`${homeStyles.container} ${homeStyles["tight-container"]}`}>
+      <SideBar />
+      <WindowContent>
+        <div className={styles.topbar}>
+          <Topbar />
         </div>
-        <div style={{ height: 12 }} />
-        <div className={styles.gridTwo}>
-          <ChartCard title="收款率" />
-          <Calendar />
+        <div className={styles.content}>
+          <KpiRow />
+          <div className={styles.gridTwo}>
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>現金流（過去12月）</div>
+              <CashflowChart />
+            </div>
+            <Timeline />
+          </div>
+          <div style={{ height: 12 }} />
+          <div className={styles.gridTwo}>
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>收款率</div>
+              <CollectionRateChart />
+            </div>
+            <Calendar />
+          </div>
         </div>
-      </div>
+      </WindowContent>
     </div>
   );
 }
