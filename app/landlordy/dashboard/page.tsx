@@ -9,6 +9,7 @@ import homeStyles from "@/app/components/home.module.scss";
 import { WindowContent } from "@/app/components/home";
 import { CashflowChart, CollectionRateChart } from "./Charts";
 import { getReceivablesByDateRange } from "./mock";
+import { Ledger } from "./Ledger";
 
 function formatCurrencyHKD(amount: number) {
   return new Intl.NumberFormat("zh-HK", {
@@ -90,8 +91,8 @@ function isSameDate(a: Date, b: Date) {
   );
 }
 
-function Calendar() {
-  const [cursor, setCursor] = React.useState(() => new Date());
+function Calendar(props: { cursor: Date; onChange: (d: Date) => void }) {
+  const cursor = props.cursor;
   const [map, setMap] = React.useState<Record<string, number>>({});
 
   const year = cursor.getFullYear();
@@ -119,9 +120,9 @@ function Calendar() {
     totalByDate.has(toKey(d)) && isSameDate(d, today);
 
   const prevMonth = () =>
-    setCursor((c) => new Date(c.getFullYear(), c.getMonth() - 1, 1));
+    props.onChange(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1));
   const nextMonth = () =>
-    setCursor((c) => new Date(c.getFullYear(), c.getMonth() + 1, 1));
+    props.onChange(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1));
 
   React.useEffect(() => {
     const rangeStart = new Date(year, month, 1);
@@ -198,6 +199,7 @@ function Timeline() {
 }
 
 export default function DashboardPage() {
+  const [cursor, setCursor] = React.useState(() => new Date());
   return (
     <div className={`${homeStyles.container} ${homeStyles["tight-container"]}`}>
       <SideBar />
@@ -220,8 +222,10 @@ export default function DashboardPage() {
               <div className={styles.cardHeader}>收款率</div>
               <CollectionRateChart />
             </div>
-            <Calendar />
+            <Calendar cursor={cursor} onChange={setCursor} />
           </div>
+          <div style={{ height: 12 }} />
+          <Ledger year={cursor.getFullYear()} monthIndex0={cursor.getMonth()} />
         </div>
       </WindowContent>
     </div>

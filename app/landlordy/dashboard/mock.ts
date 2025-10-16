@@ -88,3 +88,13 @@ export function getReceivablesByDateRange(
   }
   return out;
 }
+
+export function listInvoicesForMonth(
+  year: number,
+  monthIndex0: number,
+): Invoice[] {
+  return mockInvoices.filter((inv) => {
+    const d = new Date(inv.dueDate);
+    return d.getFullYear() === year && d.getMonth() === monthIndex0;
+  });
+}
