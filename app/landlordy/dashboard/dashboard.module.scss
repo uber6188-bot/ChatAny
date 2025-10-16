@@ -1,0 +1,185 @@
+.window {
+  width: var(--window-width);
+  height: var(--window-height);
+  background: var(--white);
+  color: var(--black);
+  border: var(--border-in-light);
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--bar-color);
+}
+.topbarTitle {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+  background: var(--gray);
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.kpi {
+  background: var(--white);
+  border: var(--border-in-light);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 12px;
+}
+.kpiTitle {
+  font-size: 12px;
+  color: #6b7280;
+}
+.kpiValue {
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 800;
+}
+.kpiSub {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.gridTwo {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+}
+
+.card {
+  background: var(--white);
+  border: var(--border-in-light);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 12px;
+}
+.cardHeader {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.chartPlaceholder {
+  height: 220px;
+  border: 1px dashed var(--bar-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.calendar {
+  background: var(--white);
+  border: var(--border-in-light);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 12px;
+}
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.dayCell {
+  background: var(--white);
+  border: var(--border-in-light);
+  border-radius: 8px;
+  padding: 8px;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+}
+.dayHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #6b7280;
+}
+.muted {
+  opacity: 0.5;
+  background: #f9fafb;
+}
+.today {
+  outline: 2px solid #2e6ff2;
+  outline-offset: -2px;
+}
+.amount {
+  margin-top: auto;
+  font-size: 12px;
+}
+.dot,
+.dotOverdue,
+.dotDue,
+.dotToday {
+  width: 6px;
+  height: 6px;
+  border-radius: 6px;
+}
+.dotOverdue {
+  background: #ef4444;
+}
+.dotToday {
+  background: #2e6ff2;
+}
+.dotDue {
+  background: #9ca3af;
+}
+
+.timeline {
+  background: var(--white);
+  border: var(--border-in-light);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 12px;
+}
+.timelineItem {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.timelineItem:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 1200px) {
+  .kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .gridTwo {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
